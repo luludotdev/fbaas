@@ -22,14 +22,14 @@ ENV NODE_ENV=production
 # Create app directory
 WORKDIR /usr/app
 
-# Copy built source
-COPY package.json yarn.lock ./
-COPY --from=builder /usr/app/build ./build
-
 # Install prod dependencies
+COPY package.json yarn.lock ./
 RUN apk add --no-cache tini bash git openssh && \
   yarn install --frozen-lockfile --production && \
   apk del bash git openssh
+
+# Copy built source
+COPY --from=builder /usr/app/build ./build
 
 # Start Node.js
 EXPOSE 3000

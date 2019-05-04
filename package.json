@@ -8,14 +8,14 @@
   "license": "ISC",
   "private": true,
   "scripts": {
-    "test": "npm run check && npm run lint",
-    "check": "npm run build -- --noEmit",
+    "test": "yarn run check && yarn run lint",
+    "check": "yarn run build --noEmit",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "prebuild": "rimraf build",
     "build": "tsc",
-    "build:dev": "npm run build -- --sourceMap",
+    "build:dev": "yarn run build --sourceMap",
     "watch": "tsc --watch",
-    "dev": "npm run watch -- --sourceMap"
+    "dev": "yarn run watch --sourceMap"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",

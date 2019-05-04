@@ -37,7 +37,8 @@ router.get('/api/v1.0/:range', cors(), ctx => {
   if (end - start > 1000000) return ctx.throw(400)
   ctx.status = 200
 
+  ctx.set('Content-type', 'text/event-stream')
   const fizzbuzz = limit(fizzBuzz(start), end - start + 1)
   const stream = new IterStream(fizzbuzz)
-  stream.pipe(ctx.res)
+  ctx.body = stream
 })

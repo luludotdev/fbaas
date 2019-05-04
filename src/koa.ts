@@ -33,6 +33,7 @@ koa
   .use(router.allowedMethods())
 
 router.get('/', ctx => {
+  // TODO: Root body
   ctx.body =
     `
 Hi there

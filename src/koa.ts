@@ -15,11 +15,17 @@ koa
   .use(router.allowedMethods())
 
 router.get('/', ctx => {
-  // TODO: Root body
   ctx.body =
     `
-Hi there
-  `.trim() + '\n'
+FizzBuzz as a Service
+
+GET /
+  Displays this page
+
+GET /api/v1.0/:range
+EG: /api/v1.0/0,100
+  Returns a text/event-stream for the requested range.
+`.trim() + '\n'
 })
 
 router.get('/api/v1.0/:range', cors(), ctx => {

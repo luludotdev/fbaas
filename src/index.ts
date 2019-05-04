@@ -1,13 +1,13 @@
 import cluster, { fork, isMaster } from 'cluster'
 import { createServer } from 'http'
 import { cpus } from 'os'
-import { PORT } from './env'
+import { PORT, WORKERS } from './env'
 import { koa } from './koa'
 import signale from './signale'
 
 const cores = cpus().length
 const maxWorkers = 4
-const workers = Math.min(cores, maxWorkers)
+const workers = WORKERS ? Math.min(cores, WORKERS) : Math.min(cores, maxWorkers)
 
 if (isMaster) {
   signale.start('master process started...')

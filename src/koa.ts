@@ -2,33 +2,15 @@ import cors from '@koa/cors'
 import Koa from 'koa'
 import Router from 'koa-router'
 import { fizzBuzz } from './fizzbuzz'
-import signale from './signale'
+import { info, logger } from './middleware'
 import { IterStream, limit } from './utils'
 
 export const koa = new Koa()
 const router = new Router()
 
 koa
-  .use(async (ctx, next) => {
-    await next()
-
-    const ip =
-      ctx.headers['cf-connecting-ip'] ||
-      ctx.headers['x-forwarded-for'] ||
-      ctx.ip
-
-    const httpVersion = `${ctx.req.httpVersionMajor}.${
-      ctx.req.httpVersionMinor
-    }`
-
-    const reqInfo = `${ctx.method} ${ctx.url} HTTP/${httpVersion}`
-    const resInfo = `${ctx.status} ${ctx.response.length || -1}`
-    const referrer = ctx.headers.referer || ctx.headers.referrer || ''
-    const ua = ctx.headers['user-agent'] || ''
-    const headers = `"${referrer}" "${ua}"`
-
-    signale.info(`${ip} - "${reqInfo}" ${resInfo} ${headers}`)
-  })
+  .use(info)
+  .use(logger)
   .use(router.routes())
   .use(router.allowedMethods())
 

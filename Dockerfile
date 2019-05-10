@@ -1,5 +1,5 @@
 # Alpine Node Image
-FROM node:10-alpine AS builder
+FROM node:12-alpine AS builder
 
 # Create app directory
 WORKDIR /usr/app
@@ -16,7 +16,7 @@ COPY . .
 RUN yarn test && yarn build
 
 # Main Image
-FROM node:10-alpine
+FROM node:12-alpine
 ENV NODE_ENV=production
 
 # Create app directory

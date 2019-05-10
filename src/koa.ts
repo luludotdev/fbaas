@@ -1,6 +1,7 @@
 import cors from '@koa/cors'
 import Koa from 'koa'
 import Router from 'koa-router'
+import { createBrotliCompress, createDeflate, createGzip } from 'zlib'
 import { fizzBuzz } from './fizzbuzz'
 import { info, logger } from './middleware'
 import { IterStream, limit } from './utils'
@@ -45,6 +46,32 @@ router.get('/api/v1.0/:range', cors(), ctx => {
 
   ctx.set('Content-type', 'text/event-stream')
   const fizzbuzz = limit(fizzBuzz(start), end - start + 1)
-  const stream = new IterStream(fizzbuzz)
-  ctx.body = stream
+  const iterableStream = new IterStream(fizzbuzz)
+
+  const acceptEncodings: string[] = (
+    ctx.headers['accept-encoding'] || ''
+  ).split(', ')
+
+  if (
+    acceptEncodings.includes('br') &&
+    typeof createBrotliCompress === 'function'
+  ) {
+    ctx.set('Content-encoding', 'br')
+    const stream = iterableStream.pipe(createBrotliCompress())
+
+    return (ctx.body = stream)
+  } else if (acceptEncodings.includes('gzip')) {
+    ctx.set('Content-encoding', 'gzip')
+    const stream = iterableStream.pipe(createGzip())
+
+    return (ctx.body = stream)
+  } else if (acceptEncodings.includes('deflate')) {
+    ctx.set('Content-encoding', 'deflate')
+    const stream = iterableStream.pipe(createDeflate())
+
+    return (ctx.body = stream)
+  } else {
+    const stream = iterableStream
+    return (ctx.body = stream)
+  }
 })
